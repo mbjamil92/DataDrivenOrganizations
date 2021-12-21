@@ -1,0 +1,148 @@
+--Dimension table 1 for customers:
+
+Create table olist_dw.customer_dim (
+customer_id serial primary key,
+customer_city varchar(250),
+customer_state varchar (250)
+);
+
+
+/*Dimension 1 ETL*/
+INSERT INTO olist_dw.customer_dim(customer_city,customer_state)
+(SELECT DISTINCT customer_city,customer_state FROM public.olist_customers);
+
+--Dimension table 2 for orders_items:
+
+Create table olist_dw.order_items_dim (
+order_id serial primary key,
+product_id serial,
+seller_id serial,
+order_item_id int,
+shipping_limit_date varchar(250)
+);
+
+/*Dimension 2 ETL*/
+INSERT INTO olist_dw.order_items_dim(order_item_id,shipping_limit_date)
+(SELECT DISTINCT order_item_id,shipping_limit_date FROM public.olist_order_items);
+
+--price and freight value
+--will come as a measure in main fact table so will all the dates
+
+--Dimension table 3 for payments:
+
+Create table olist_dw.payments_dim (
+order_id serial primary key,
+Payment_installments int,
+Payment_sequential int,
+Payment_type varchar(250)
+);
+--payment_value will be in fact table
+
+/*Dimension 3 ETL*/
+INSERT INTO olist_dw.payments_dim(Payment_installments,Payment_sequential,Payment_type)
+(SELECT DISTINCT Payment_installments,Payment_sequential,Payment_type FROM public.olist_order_payments);
+
+--Dimension table 4 for reviews:
+
+Create table olist_dw.review_dim (
+review_id serial primary key,
+order_id serial,
+review_score int,
+review_comment_title varchar(250),
+review_creation_date varchar(250),
+review_answer_timestamp varchar(250)
+);
+
+/*Dimension 4 ETL*/
+INSERT INTO olist_dw.review_dim(review_score,review_comment_title,review_creation_date,review_answer_timestamp)
+(SELECT DISTINCT review_score,review_comment_title,review_creation_date,review_answer_timestamp FROM public.olist_order_review);
+
+--Dimension table 5 for order_data:
+
+Create table olist_dw.order_data_dim (
+order_id serial primary key,
+Customer_id serial,
+Order_status varchar(250),
+order_purchase_timestamp VARCHAR(250),
+order_approved_at VARCHAR(250),
+order_delivered_carrier_date VARCHAR(250),
+order_delivered_customer_date VARCHAR(250),
+order_estimated_delivery_date VARCHAR(250)
+);
+
+/*Dimension 5 ETL*/
+INSERT INTO olist_dw.order_data_dim(Order_status,order_purchase_timestamp,order_approved_at,order_delivered_carrier_date,
+order_delivered_customer_date,order_estimated_delivery_date)
+(SELECT DISTINCT Order_status,order_purchase_timestamp,order_approved_at,order_delivered_carrier_date,
+order_delivered_customer_date,order_estimated_delivery_date FROM public.olist_orders_data);
+
+
+--Dimension table 6 for products:
+
+Create table olist_dw.products_dim (
+product_id serial primary key,
+product_category_name varchar(250)
+);
+
+/*Dimension 6 ETL*/
+INSERT INTO olist_dw.products_dim(product_category_name)
+(SELECT DISTINCT product_category_name FROM public.olist_products);
+
+/* --measures:
+Product_name_length float
+Product_description_lenght float
+Product_photos_qty float
+Product_weight_g float
+Product_length_cm float
+Product_height_cm float
+Product_width_cm float */
+
+--Dimension table 7 for seller:
+
+Create table Olist_dw.seller_dim (
+seller_id serial primary key,
+Seller_zip_code_prefix int,
+Seller_city varchar(250),
+Seller_state varchar (250)
+);
+
+/*Dimension 7 ETL*/
+INSERT INTO olist_dw.seller_dim (Seller_zip_code_prefix,seller_city, seller_state)
+(SELECT DISTINCT Seller_zip_code_prefix,seller_city, seller_state FROM public.olist_seller);
+
+--Dimension table 8 for transalation:
+
+Create table Olist_dw.transalation_dim (
+transalation_id serial primary key,
+Product_category_name varchar(250),
+Product_category_name_english varchar (250)
+);
+
+/*Dimension 8 ETL*/
+INSERT INTO olist_dw.transalation_dim (Product_category_name, Product_category_name_english)
+(SELECT DISTINCT Product_category_name, Product_category_name_english FROM public.product_category_name_translation);
+
+
+-- Dimension 9 Fact Table:
+CREATE TABLE olist_dw.fact_dim (	
+customer_id int references olist_dw.customer_dim(customer_id),
+order_id int references olist_dw.order_items_dim (order_id),
+order_payment_id int references olist_dw.payments_dim (order_id),
+review_id int references olist_dw.review_dim (review_id),
+order_data_id int references olist_dw.order_data_dim (order_id),
+product_id int references olist_dw.products_dim (product_id),
+seller_id int references olist_dw.seller_dim (seller_id),
+transalation_id int references olist_dw.transalation_dim (transalation_id),
+price float,
+freight_value float,
+payment_value float,
+Product_name_length float,
+Product_description_lenght float,
+Product_photos_qty float,
+Product_weight_g float,
+Product_length_cm float,
+Product_height_cm float,
+Product_width_cm float,
+primary key (customer_id, order_id, order_payment_id,review_id,order_data_id,product_id,seller_id,transalation_id));
+
+
