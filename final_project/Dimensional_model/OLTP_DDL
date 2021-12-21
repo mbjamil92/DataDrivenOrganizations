@@ -1,0 +1,84 @@
+--DDL for Final Project:
+
+CREATE TABLE olist_customers (
+customer_id VARCHAR(250) PRIMARY KEY,
+customer_unique_id VARCHAR(250),
+customer_zip_code_prefix int,
+customer_city VARCHAR(250),      
+customer_state VARCHAR(250)
+);
+
+CREATE TABLE olist_geolocation (
+geolocation_zip_code_prefix int,
+geolocation_lat float,
+geolocation_lng float,
+geolocation_city VARCHAR(250),
+geolocation_state VARCHAR(250)
+);
+
+CREATE TABLE olist_order_items(
+order_id VARCHAR(250),
+order_item_id int,
+product_id VARCHAR(250),
+seller_id VARCHAR(250),
+shipping_limit_date VARCHAR(250),
+price float,
+freight_value float
+);
+
+CREATE TABLE olist_order_payments(
+order_id VARCHAR(250),
+payment_sequential int,
+payment_type VARCHAR(250),
+payment_installments int,
+payment_value float
+);
+
+CREATE TABLE olist_order_review(
+review_id VARCHAR(250),
+order_id VARCHAR(250),
+review_score int,
+review_comment_title VARCHAR(250),
+review_comment_message VARCHAR(250),
+review_creation_date VARCHAR(250),
+review_answer_timestamp VARCHAR(250)
+);
+
+CREATE TABLE olist_orders_data(
+order_id VARCHAR(250),
+customer_id VARCHAR(250),
+order_status VARCHAR(250),
+order_purchase_timestamp VARCHAR(250),
+order_approved_at VARCHAR(250),
+order_delivered_carrier_date VARCHAR(250),
+order_delivered_customer_date VARCHAR(250),
+order_estimated_delivery_date VARCHAR(250)
+);
+
+
+CREATE TABLE olist_products(
+product_id VARCHAR(250),
+product_category_name VARCHAR(250),
+product_name_lenght float,
+product_description_lenght float,
+product_photos_qty float,
+product_weight_g float,
+product_length_cm float,
+product_height_cm float,
+product_width_cm float
+);
+
+CREATE TABLE olist_seller(
+seller_id VARCHAR(250),
+seller_zip_code_prefix int,
+seller_city VARCHAR(250),
+seller_state VARCHAR(250)
+);
+
+CREATE TABLE product_category_name_translation(
+product_category_name VARCHAR(250),
+product_category_name_english VARCHAR(250) 
+);
+
+
+
